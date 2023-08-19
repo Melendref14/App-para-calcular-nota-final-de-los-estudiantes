@@ -1,64 +1,77 @@
-// Función para validar que una nota esté en el rango de 0 a 10
-function validarNota(nota) {
-    return nota >= 0 && nota <= 10;
-}
-
-// Función para poder guardar los datos en localstorage
-function guardarDatos(estudiantes) {
-    localStorage.setItem("estudiantes", JSON.stringify(estudiantes));
-}
-
-// Función para cargar los datos desde localstorage
-function cargarDatos() {
-    const data = localStorage.getItem("estudiantes");
-    return data ? JSON.parse(data) : [];
-}
-
-// Función para calcular la nota final
-function calcularNotaFinal() {
-    // Pedimos el numero de estudiantes
-    let numAlumnos = parseInt(prompt("Ingrese el numero de alumnos:"));
-
-    let estudiantes = [];
-
-    // Pedimos las notas de cada alumno y creamos los objetos correspondientes
-    for (let i = 0; i < numAlumnos; i++) {
-        let notaAlumno;
-
-        do {
-            notaAlumno = parseFloat(prompt(`Ingrese la nota del alumno ${i + 1}:`));
-            
-            if (!validarNota(notaAlumno)) {
-                alert("La nota debe estar entre 0 y 10. Por favor, ingrese la nota nuevamente.");
-            }
-        } while (!validarNota(notaAlumno));
-
-        // Creamos un objeto para el estudiante y lo añadimos al array
-        estudiantes.push({ numero: i + 1, nota: notaAlumno });
-    }
-
-    // Guardamos los datos en localstorage
-    guardarDatos(estudiantes);
-
-    // Calculamos la suma de las notas finales
-    let sumaNotasFinales = estudiantes.reduce((acumulador, { nota }) => acumulador + nota, 0);
-
-    // Calculamos la nota promedio
-    let promedio = sumaNotasFinales / numAlumnos;
-
-    // Se muestra el resultado en el DOM
-    document.getElementById("resultado").textContent = `La nota final promedio de los ${numAlumnos} alumnos es: ${promedio.toFixed(2)}`;
-}
-
-// Agregamos un evento al botón para calcular la nota final
 document.addEventListener("DOMContentLoaded", function() {
-    document.getElementById("calcularBtn").addEventListener("click", function() {
-        // Reiniciar el contenido del elemento resultado
-        document.getElementById("resultado").textContent = ""; // Por alguna razon no me elimina el resultado cuando vuelvo a presionar el boton para calcular un nuevo resultado, espero pueda revisar y ayudarme con eso tutor.
-        console.log(resultado);
-        // Calcular la nota final
-        calcularNotaFinal();
+    /* Obtener los elementos del formulario y del resultado */
+    const notasForm = document.getElementById("notasForm");
+    const resultadoElement = document.getElementById("resultado");
+
+    notasForm.addEventListener("submit", function(event) {
+        event.preventDefault();
+
+        /* Numero de alumnos ingresados */
+        const numAlumnosInput = document.getElementById("numAlumnos");
+        const numAlumnos = parseInt(numAlumnosInput.value);
+
+        /* Validacion del numero de alumnos */
+        if (!isNaN(numAlumnos) && numAlumnos > 0) {
+            /* Eliminar resultado anteriores */
+            while (notasForm.firstChild) {
+                notasForm.removeChild(notasForm.firstChild);
+            }
+
+            const notasInputsContainer = document.createElement("div");
+            notasInputsContainer.className = "mb-3";
+            notasForm.appendChild(notasInputsContainer);
+
+            for (let i = 0; i < numAlumnos; i++) {
+                const notaInput = document.createElement("input");
+                /* Atributos y estilos para los campos de entrada */
+                notaInput.type = "text";
+                notaInput.id = `nota${i + 1}`;
+                notaInput.className = "form-control mb-2";
+                notaInput.placeholder = `Nota del alumno ${i + 1}`;
+                notaInput.maxLength = 4;
+                notaInput.pattern = "[0-9]+([\\.,][0-9]+)?";
+                notaInput.required = true;
+
+                notasInputsContainer.appendChild(notaInput);
+            }
+
+            /* Boton para calcular la nota final */
+            const calcularBtn = document.createElement("button");
+            calcularBtn.type = "button";
+            calcularBtn.id = "calcularBtn";
+            calcularBtn.className = "btn btn-outline-primary btn-lg";
+            calcularBtn.textContent = "Calcular Nota Final";
+            notasForm.appendChild(calcularBtn);
+
+            calcularBtn.addEventListener("click", function() {
+                let totalNotas = 0;
+                let notasValidas = true;
+
+                /* Validacion de la suma de las notas  */
+                for (let i = 0; i < numAlumnos; i++) {
+                    const notaAlumnoInput = document.getElementById(`nota${i + 1}`);
+                    const notaAlumno = parseFloat(notaAlumnoInput.value.replace(",", "."));
+
+                    notasValidas = notasValidas && validarNota(notaAlumno); // Uso del operador AND para notas válidas
+
+                    totalNotas += notaAlumno;
+                }
+
+                /* Mostrar el resultado */
+                if (notasValidas) {
+                    const promedio = totalNotas / numAlumnos;
+                    resultadoElement.textContent = `La nota final promedio de los ${numAlumnos} alumnos es: ${promedio.toFixed(2)}`;
+                } else {
+                    resultadoElement.textContent = "Las notas deben estar entre 0 y 10. Por favor, ingrese las notas nuevamente.";
+                }
+            });
+        } else {
+            resultadoElement.textContent = "Por favor, ingrese un número válido de alumnos.";
+        }
     });
+
+    /* Validacion de la nota */
+    function validarNota(nota) {
+        return nota >= 0 && nota <= 10;
+    }
 });
-
-

@@ -3,27 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title></title>
-    <script src="js/miArchivo.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <title>Calculadora de Notas</title>
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Personalización de estilos -->
     <style>
-        /* Estilos para el texto del resultado */
+        body {
+            background-color: #f8f9fa;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            margin-top: 50px;
+        }
         #resultado {
-            color: #000; /* Color azul */
-            font-size: 24px; /* Tamaño de fuente */
-            margin-top: 20px; /* Margen superior */
-            padding: 10px; /* Relleno */
-            border-radius: 5px; /* Borde redondeado */
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #f0f0f0;
         }
     </style>
 </head>
 <body>
-    <div class="d-flex flex-column justify-content-center align-items-center vh-100">
-        <!-- Boton para calcular la nota final -->
-        <button id="calcularBtn" type="button" class="btn btn-outline-primary btn-lg">Calcular Nota Final</button>
-        
-        <!-- DIV para mostrar el resultado -->
-        <div id="resultado" class=""></div>
+    <!-- Container Principal -->
+    <div class="container">
+        <!-- Titulo Principal -->
+        <h1 class="text-center">Calculadora de Notas</h1>
+        <!-- Formulario para ingresar el numero de alumnos -->
+        <form id="notasForm">
+            <div class="mb-3">
+                <label for="numAlumnos" class="form-label">Número de Alumnos:</label>
+                <input type="number" id="numAlumnos" class="form-control" required>
+            </div>
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary">Ingresar Notas</button>
+            </div>
+        </form>
+        <!-- Mostrar el resultado -->
+        <div id="resultado" class="text-center"></div>
     </div>
+
+    <script src="js/miArchivo.js"></script>
 </body>
 </html>
