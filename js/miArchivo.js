@@ -11,10 +11,24 @@ document.addEventListener("DOMContentLoaded", function() {
     const estudiantesAnteriores = JSON.parse(localStorage.getItem("estudiantes")) || [];
     mostrarEstudiantesAnteriores(estudiantesAnteriores);
 
-    /* Cargamos estudiantes desde el JSON al inicio y los mostramos */
-    fetch("usuarios.json")
+    /* Cargamos estudiantes desde el JSON al inicio y los mostramos CON FETCH */
+    /* fetch("usuarios.json")
     .then(response => response.json())
     .then(estudiantesDelJSON => {
+        mostrarMejoresEstudiantes(estudiantesDelJSON);
+    })
+    .catch(error => {
+        console.error('Error al cargar estudiantes del JSON:', error);
+    }); */
+
+    /* Cargamos estudiantes desde el JSON al inicio y los mostramos CON LIBRERIA AXIOS (Promesas y Asincronia)*/
+    axios.get("usuarios.json")
+    .then(response => {
+        /*  Parsear la respuesta como JSON */
+        return response.data;
+    })
+    .then(estudiantesDelJSON => {
+         /* Llamar a la función para mostrar los mejores estudiantes */
         mostrarMejoresEstudiantes(estudiantesDelJSON);
     })
     .catch(error => {
@@ -95,13 +109,38 @@ document.addEventListener("DOMContentLoaded", function() {
                                 nota: notaAlumno,
                                 fecha: fechaCalculo
                             });
+
                         }
+
+                        /* Crear el contenedor para los estudiantes actuales */
+                        const estudiantesActualesContainer = document.createElement("ul");
+                        estudiantesActualesContainer.className = "list-group";
+
+                        /* Agregar los estudiantes al contenedor */
+                        estudiantesActuales.forEach(estudiante => {
+                            const listItem = document.createElement("li");
+                            listItem.className = "list-group-item";
+                            listItem.textContent = `Estudiante: ${estudiante.nombre} ${estudiante.apellido} - Nota: ${estudiante.nota} - Fecha: ${estudiante.fecha}`;
+                            estudiantesActualesContainer.appendChild(listItem);
+                        });
+                        
+                        /* Agregar el contenedor a la lista */
+                        listaEstudiantesAnteriores.appendChild(estudiantesActualesContainer);
 
                         if (notasValidas) {
                             const promedio = totalNotas / numAlumnos;
                             resultadoElement.textContent = `La nota final promedio de los ${numAlumnos} estudiantes es: ${promedio.toFixed(2)}`;
                             actualizarListaEstudiantes(estudiantesActuales);
                             guardarEstudiantesEnLocalStorage(estudiantesAnteriores.concat(estudiantesActuales));
+
+                            /* Agregar clase de animacion a los elementos del contenedor */
+                            estudiantesActualesContainer.querySelectorAll("li").forEach(item => {
+                                item.classList.add("animate__animated", "animate__fadeIn");
+                                /* Eliminar la clase de animacion despues de un tiempo */
+                                setTimeout(() => {
+                                    item.classList.remove("animate__animated", "animate__fadeIn");
+                                }, 2200); /* Tiempo */
+                            });
                         } else {
                             resultadoElement.textContent = "Las notas deben estar entre 0 y 10. Por favor, ingrese las notas nuevamente.";
                         }
@@ -140,7 +179,15 @@ document.addEventListener("DOMContentLoaded", function() {
         estudiantes.forEach((estudiante, index) => {
             const listItem = document.createElement("li");
             listItem.className = "list-group-item";
-            listItem.textContent = `Estudiante ${index + 1}: ${estudiante.nombre} ${estudiante.apellido} - Nota: ${estudiante.nota} - Fecha: ${estudiante.fecha}`;
+            /* Cambiar el color dependiendo de la nota del estudiante */
+            if (estudiante.nota < 5) {
+                listItem.style.color = "red";
+            } else {
+                listItem.style.color = "green";
+            }
+
+            listItem.textContent = `Estudiante ${index + 1}: ${estudiante.nombre} ${estudiante.apellido} - Nota: ${estudiante.nota}`;
+
             listaEstudiantesAnteriores.appendChild(listItem);
         });
     }
